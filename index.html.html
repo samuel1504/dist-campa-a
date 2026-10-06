@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Día 1 — Cuenta regresiva</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&amp;family=Montserrat:wght@900&amp;display=swap">
+<style>
+body{margin:0;background:#F7F6F2}
+a{color:#000000}a:hover{color:#000000}
+.coord-line{display:block;white-space:nowrap;font-family:'Montserrat',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:-0.02em;line-height:0.86;font-size:8.6vw}
+.decode-btn{appearance:none;cursor:pointer;min-height:56px;padding:0 32px;border:3px solid #000000;border-radius:9999px;background:#F7F6F2;color:#000000;font-family:'Inter',sans-serif;font-weight:500;font-size:15px;letter-spacing:0.08em;text-transform:uppercase;white-space:nowrap;box-shadow:none;transition:background-color 120ms linear,color 120ms linear}
+.decode-btn:hover,.decode-btn:focus-visible{background:#000000;color:#F7F6F2}
+.decode-btn:focus-visible{outline:3px solid #000000;outline-offset:4px}
+.wait-input{flex:1 1 240px;min-width:0;min-height:56px;padding:0 4px;border:0;border-bottom:3px solid #000000;border-radius:0;background:transparent;color:#000000;font-family:'Inter',sans-serif;font-size:17px;line-height:1.4;box-shadow:none}
+.wait-input::placeholder{color:#000000;opacity:0.55}
+.wait-input:focus{outline:none;border-bottom-width:5px}
+</style>
+</helmet>
+<main style="position: relative; min-height: 100vh; overflow: hidden; background: #F7F6F2; color: #000000; font-family: 'Inter', sans-serif; font-weight: 400; line-height: 1.4; display: flex; flex-direction: column; box-sizing: border-box">
+
+<div aria-hidden="true" style="position: absolute; inset: 0; z-index: 0; opacity: 0.05; display: flex; flex-direction: column; justify-content: space-between; padding: 1vw 0; pointer-events: none; user-select: none">
+<span class="coord-line" style="margin-left: -0.5vw">40.7128° N, 74.0060° W //</span>
+<span class="coord-line" style="margin-left: -4vw">6.2442° N, 75.5812° W //</span>
+<span class="coord-line" style="margin-left: -0.5vw">40.7128° N, 74.0060° W //</span>
+<span class="coord-line" style="margin-left: -4vw">6.2442° N, 75.5812° W //</span>
+<span class="coord-line" style="margin-left: -0.5vw">40.7128° N, 74.0060° W //</span>
+</div>
+
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 50%; height: 3px; background: #000000; z-index: 1"></div>
+
+<header style="position: relative; z-index: 2; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 24px clamp(16px, 4vw, 56px); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase">
+<span>Día 01 / 07</span>
+<span>NYC → MDE</span>
+</header>
+
+<section style="position: relative; z-index: 2; flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 40px; padding: 24px 16px 72px">
+
+<p style="margin: 0; text-align: center; font-size: clamp(16px, 1.6vw, 20px); line-height: 1.4; max-width: 32ch">Medallo, un clásico está en camino...</p>
+
+<div role="timer" aria-live="off" aria-label="{{timerLabel}}" style="width: min(100%, 980px); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 3px solid #000000; background: #F7F6F2; box-sizing: border-box">
+<div style="display: flex; flex-direction: column; border-right: 3px solid #000000">
+<div style="padding: 10px 12px; border-bottom: 3px solid #000000; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; text-align: center">Días</div>
+<div style="padding: clamp(16px, 3vw, 40px) 8px; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: -0.02em; font-size: clamp(56px, 12vw, 176px); line-height: 0.9; font-variant-numeric: tabular-nums">{{days}}</div>
+</div>
+<div style="display: flex; flex-direction: column; border-right: 3px solid #000000">
+<div style="padding: 10px 12px; border-bottom: 3px solid #000000; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; text-align: center">Horas</div>
+<div style="padding: clamp(16px, 3vw, 40px) 8px; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: -0.02em; font-size: clamp(56px, 12vw, 176px); line-height: 0.9; font-variant-numeric: tabular-nums">{{hours}}</div>
+</div>
+<div style="display: flex; flex-direction: column">
+<div style="padding: 10px 12px; border-bottom: 3px solid #000000; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; text-align: center">Minutos</div>
+<div style="padding: clamp(16px, 3vw, 40px) 8px; text-align: center; font-family: 'Montserrat', sans-serif; font-weight: 900; letter-spacing: -0.02em; font-size: clamp(56px, 12vw, 176px); line-height: 0.9; font-variant-numeric: tabular-nums">{{minutes}}</div>
+</div>
+</div>
+
+<sc-if value="{{showForm}}" hint-placeholder-val="{{ true }}">
+<form onSubmit="{{onSubmit}}" novalidate="novalidate" style="width: min(100%, 640px); display: flex; flex-direction: column; gap: 10px; background: #F7F6F2; padding: 8px 0">
+<label for="waitlist-email" style="font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase">Lista de espera — tu correo</label>
+<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px">
+<input id="waitlist-email" class="wait-input" type="email" name="email" autocomplete="email" placeholder="nombre@correo.com" value="{{email}}" onChange="{{onEmail}}">
+<button type="submit" class="decode-btn">Decodificar origen</button>
+</div>
+<sc-if value="{{hasError}}" hint-placeholder-val="{{ false }}">
+<p role="alert" style="margin: 0; font-size: 14px">Ingresa un correo válido para decodificar.</p>
+</sc-if>
+</form>
+</sc-if>
+
+<sc-if value="{{submitted}}" hint-placeholder-val="{{ false }}">
+<div role="status" style="width: min(100%, 640px); border: 3px solid #000000; background: #F7F6F2; padding: 20px 24px; box-sizing: border-box; text-align: center">
+<p style="margin: 0; font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; font-size: 24px; line-height: 1.1">Origen en proceso</p>
+<p style="margin: 8px 0 0; font-size: 15px">Registramos <strong style="font-weight: 500">{{email}}</strong>. La siguiente pista llega mañana.</p>
+</div>
+</sc-if>
+
+</section>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"startAt":{"editor":"text","default":"2026-10-07T00:00:00-05:00","section":"Countdown"},"launchAt":{"editor":"text","default":"2026-10-14T18:00:00-05:00","section":"Countdown"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { now: Date.now(), email: '', submitted: false, hasError: false };
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => this.setState({ now: Date.now() }), 1000);
+  }
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+  renderVals() {
+    const target = Date.parse(this.props.launchAt ?? '2026-10-14T18:00:00-05:00');
+    const start = Date.parse(this.props.startAt ?? '2026-10-07T00:00:00-05:00');
+    // Antes del inicio el contador queda congelado en la duración total; después corre hasta el lanzamiento.
+    const ref = isNaN(start) ? this.state.now : Math.max(this.state.now, start);
+    const diff = isNaN(target) ? 0 : Math.max(0, target - ref);
+    const totalMin = Math.floor(diff / 60000);
+    const d = Math.floor(totalMin / 1440);
+    const h = Math.floor((totalMin % 1440) / 60);
+    const m = totalMin % 60;
+    const pad = (n) => String(n).padStart(2, '0');
+    return {
+      days: pad(d),
+      hours: pad(h),
+      minutes: pad(m),
+      timerLabel: d + ' días, ' + h + ' horas y ' + m + ' minutos restantes',
+      email: this.state.email,
+      hasError: this.state.hasError,
+      submitted: this.state.submitted,
+      showForm: !this.state.submitted,
+      onEmail: (e) => this.setState({ email: e.target.value, hasError: false }),
+      onSubmit: (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.state.email.trim());
+        this.setState(ok ? { submitted: true, hasError: false } : { hasError: true });
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
