@@ -540,13 +540,14 @@ html.riddle-on .decode-btn{background:var(--collab-alpina-caramel);color:var(--s
   // ===== CALENDARIO (hora de Colombia, UTC-5, sin horario de verano) =====
   var COUNT_START = Date.parse('2026-10-07T00:00:00-05:00');
   var COUNT_END   = Date.parse('2026-10-14T18:00:00-05:00');
+  var OPEN_DAY    = Date.parse('2026-10-14T00:00:00-05:00');
   var DAY_STARTS = [
     [2, '2026-10-08T00:00:00-05:00'],
     [3, '2026-10-09T00:00:00-05:00'],
     [4, '2026-10-10T00:00:00-05:00'],
     [5, '2026-10-11T00:00:00-05:00'],
     [6, '2026-10-12T00:00:00-05:00'],
-    [7, '2026-10-14T06:00:00-05:00']
+    [7, '2026-10-13T18:00:00-05:00']
   ].map(function (p) { return [p[0], Date.parse(p[1])]; });
 
   function dayAt(now) {
@@ -604,15 +605,19 @@ html.riddle-on .decode-btn{background:var(--collab-alpina-caramel);color:var(--s
     elD.textContent = pad(d); elH.textContent = pad(h); elM.textContent = pad(m);
     elCounter.setAttribute('aria-label', d + ' días, ' + h + ' horas y ' + m + ' minutos para la apertura');
     applyDay(override || dayAt(now));
-    // Día 7: entre las 6:00 a. m. y las 6:00 p. m. del 14 oct anuncia "hoy"; después, "abiertos".
-    var preOpen = now >= DAY_STARTS[DAY_STARTS.length - 1][1] && now < COUNT_END;
-    if (currentDay === 7 && preOpen !== lastPreOpen) {
-      lastPreOpen = preOpen;
-      document.getElementById('heroTag').textContent = preOpen ? 'Hoy · 6:00 p. m.' : 'Medellín · 14.10.2026';
-      document.getElementById('heroTitle').textContent = preOpen ? 'Hoy abrimos, Medallo.' : 'We\u2019re open, Medallo.';
-      document.getElementById('heroText').textContent = preOpen
-        ? 'Provenza, El Poblado. Abrimos hoy, 14 de octubre, a las 6:00 p. m.'
-        : 'Provenza, El Poblado. Abiertos desde el 14 de octubre de 2026.';
+    // Día 7: visible desde el 13 oct 6:00 p. m. Antes de la medianoche dice "mañana";
+    // el 14 hasta las 6:00 p. m. dice "hoy"; después, "abiertos".
+    var phase = now >= COUNT_END ? 'open' : (now >= OPEN_DAY ? 'hoy' : 'manana');
+    if (currentDay === 7 && phase !== lastPreOpen) {
+      lastPreOpen = phase;
+      var T = {
+        manana: ['Mañana · 6:00 p. m.', 'Mañana abrimos, Medallo.', 'Provenza, El Poblado. Abrimos mañana, 14 de octubre, a las 6:00 p. m.'],
+        hoy:    ['Hoy · 6:00 p. m.', 'Hoy abrimos, Medallo.', 'Provenza, El Poblado. Abrimos hoy, 14 de octubre, a las 6:00 p. m.'],
+        open:   ['Medellín · 14.10.2026', 'We\u2019re open, Medallo.', 'Provenza, El Poblado. Abiertos desde el 14 de octubre de 2026.']
+      }[phase];
+      document.getElementById('heroTag').textContent = T[0];
+      document.getElementById('heroTitle').textContent = T[1];
+      document.getElementById('heroText').textContent = T[2];
     }
   }
 
